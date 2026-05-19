@@ -1,6 +1,20 @@
 parameters:
-	level: 9
-	paths:
-		- ../src
-		- ../tests
-	tmpDir: ../var/cache/phpstan
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true
+            tooWideThrowType: true
+        uncheckedExceptionClasses:
+            - 'LogicException'
+            - 'RuntimeException'
+    ignoreErrors:
+        -
+            identifier: 'missingType.checkedException'
+            paths:
+                - '../tests/*'
+            reportUnmatched: false
+    level: 10
+    paths:
+        - ../src/
+        - ../tests/
+    tmpDir: ../var/cache/phpstan
+    treatPhpDocTypesAsCertain: false
