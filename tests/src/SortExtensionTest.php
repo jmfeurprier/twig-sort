@@ -41,7 +41,7 @@ class SortExtensionTest extends TestCase
         $names = array_map(
             static fn(
                 TwigFilter $f,
-            ) => $f->getName(),
+            ): string => $f->getName(),
             $filters,
         );
 
@@ -74,7 +74,7 @@ class SortExtensionTest extends TestCase
         $names = array_map(
             static fn(
                 TwigFilter $f,
-            ) => $f->getName(),
+            ): string => $f->getName(),
             $extension->getFilters(),
         );
 
