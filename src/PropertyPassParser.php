@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jmf\Twig\Extension\Sort;
 
 use Jmf\Sort\Direction;
 use Jmf\Sort\PropertyPass;
 use Jmf\Twig\Extension\Sort\Exception\SortException;
+use Traversable;
 
 class PropertyPassParser
 {
     /**
-     * @param string|string[]|array<string, mixed> $specs
+     * @param string|list<string>|array<string, string>|Traversable<string, string> $specs
      *
      * @return PropertyPass[]
      *
      * @throws SortException
      */
     public function parse(
-        array | string $specs,
+        iterable | string $specs,
     ): iterable {
         if (is_string($specs)) {
             return [
@@ -24,6 +27,10 @@ class PropertyPassParser
                     property: $specs,
                 ),
             ];
+        }
+
+        if ($specs instanceof Traversable) {
+            $specs = iterator_to_array($specs);
         }
 
         $propertyPasses = [];
@@ -42,7 +49,7 @@ class PropertyPassParser
      */
     private function parsePropertySpecs(
         int | string $property,
-        array | string $propertySpecs
+        array | string $propertySpecs,
     ): PropertyPass {
         return new PropertyPass(
             $this->parseProperty($property, $propertySpecs),
@@ -58,7 +65,7 @@ class PropertyPassParser
      */
     private function parseProperty(
         int | string $property,
-        array | string $propertySpecs
+        array | string $propertySpecs,
     ): string {
         if (is_numeric($property)) {
             if (!is_string($propertySpecs)) {
@@ -78,7 +85,7 @@ class PropertyPassParser
      */
     private function parseDirection(
         int | string $property,
-        array | string $propertySpecs
+        array | string $propertySpecs,
     ): Direction {
         if (is_numeric($property)) {
             return Direction::ASC;
@@ -99,12 +106,15 @@ class PropertyPassParser
         return Direction::ASC;
     }
 
+    /**
+     * @throws SortException
+     */
     private function translateDirection(
         string $direction,
     ): Direction {
         return match ($direction) {
-            'asc' => Direction::ASC,
-            'desc' => Direction::DESC,
+            'asc'   => Direction::ASC,
+            'desc'  => Direction::DESC,
             default => throw new SortException("Property specs 'direction' should be either 'asc' or 'desc'."),
         };
     }
@@ -116,7 +126,7 @@ class PropertyPassParser
      */
     private function parseFlags(
         int | string $property,
-        array | string $propertySpecs
+        array | string $propertySpecs,
     ): int {
         if (is_numeric($property) || !is_array($propertySpecs)) {
             return 0;

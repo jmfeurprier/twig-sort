@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jmf\Twig\Extension\Sort;
 
 use Jmf\Sort\AssociativeSorter;
@@ -9,6 +11,7 @@ use Jmf\Sort\ByValueSorter;
 use Jmf\Sort\Direction;
 use Jmf\Twig\Extension\Sort\Exception\SortException;
 use Override;
+use Traversable;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -27,7 +30,7 @@ class SortExtension extends AbstractExtension
     }
 
     #[Override]
-    public function getFilters(): iterable
+    public function getFilters(): array
     {
         return [
             new TwigFilter(
@@ -142,7 +145,7 @@ class SortExtension extends AbstractExtension
      * - {{ articles|psort({'publication_date': 'desc', 'author': 'asc'}) }}
      *
      * @param array<int|string, array<string, mixed>|object> $array
-     * @param string|string[]|array<string, mixed>           $specs
+     * @param string|list<string>|array<string, string>|Traversable<string, string> $specs
      *
      * @return array<int|string, array<string, mixed>|object>
      *
@@ -150,7 +153,7 @@ class SortExtension extends AbstractExtension
      */
     public function psort(
         array $array,
-        array | string $specs,
+        iterable | string $specs,
     ): array {
         return $this->byPropertySorter->sort(
             $array,
