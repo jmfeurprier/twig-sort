@@ -5,7 +5,7 @@
     "type": "library",
     "require": {
         "php": ">=8.3",
-        "jmf/sort": "^1.0",
+        "jmf/sort": "^2.0",
         "twig/twig": "^3.0"
     },
     "require-dev": {

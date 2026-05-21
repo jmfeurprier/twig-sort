@@ -20,11 +20,11 @@ class SortExtension extends AbstractExtension
     public final const string PREFIX_DEFAULT = '';
 
     public function __construct(
-        private readonly ByPropertySorter $byPropertySorter,
-        private readonly ByKeySorter $byKeySorter,
-        private readonly ByValueSorter $byValueSorter,
-        private readonly AssociativeSorter $associativeSorter,
-        private readonly PropertyPassParser $propertyPassParser,
+        private readonly ByPropertySorter $byPropertySorter = new ByPropertySorter(),
+        private readonly ByKeySorter $byKeySorter = new ByKeySorter(),
+        private readonly ByValueSorter $byValueSorter = new ByValueSorter(),
+        private readonly AssociativeSorter $associativeSorter = new AssociativeSorter(),
+        private readonly PropertyPassParser $propertyPassParser = new PropertyPassParser(),
         private readonly string $functionPrefix = self::PREFIX_DEFAULT,
     ) {
     }
