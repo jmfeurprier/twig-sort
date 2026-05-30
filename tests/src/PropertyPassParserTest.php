@@ -13,17 +13,17 @@ use PHPUnit\Framework\TestCase;
 
 final class PropertyPassParserTest extends TestCase
 {
-    private PropertyPassParser $parser;
+    private PropertyPassParser $propertyPassParser;
 
     #[Override]
     protected function setUp(): void
     {
-        $this->parser = new PropertyPassParser();
+        $this->propertyPassParser = new PropertyPassParser();
     }
 
     public function testParseStringReturnsAscPass(): void
     {
-        $result = $this->parser->parse('title');
+        $result = $this->propertyPassParser->parse('title');
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::ASC)],
@@ -33,7 +33,7 @@ final class PropertyPassParserTest extends TestCase
 
     public function testParseIndexedArrayOfStrings(): void
     {
-        $result = $this->parser->parse(['title', 'author']);
+        $result = $this->propertyPassParser->parse(['title', 'author']);
 
         $this->assertEquals(
             [
@@ -46,7 +46,7 @@ final class PropertyPassParserTest extends TestCase
 
     public function testParseAssociativeArrayWithAscDirection(): void
     {
-        $result = $this->parser->parse(['title' => 'asc']);
+        $result = $this->propertyPassParser->parse(['title' => 'asc']);
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::ASC)],
@@ -56,7 +56,7 @@ final class PropertyPassParserTest extends TestCase
 
     public function testParseAssociativeArrayWithDescDirection(): void
     {
-        $result = $this->parser->parse(['title' => 'desc']);
+        $result = $this->propertyPassParser->parse(['title' => 'desc']);
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::DESC)],
@@ -66,7 +66,7 @@ final class PropertyPassParserTest extends TestCase
 
     public function testParseAssociativeArrayWithMultipleProperties(): void
     {
-        $result = $this->parser->parse([
+        $result = $this->propertyPassParser->parse([
             'published_at' => 'desc',
             'title'        => 'asc',
         ]);
@@ -82,7 +82,7 @@ final class PropertyPassParserTest extends TestCase
 
     public function testParseTraversable(): void
     {
-        $result = $this->parser->parse(new ArrayIterator(['published_at' => 'desc', 'title' => 'asc']));
+        $result = $this->propertyPassParser->parse(new ArrayIterator(['published_at' => 'desc', 'title' => 'asc']));
 
         $this->assertEquals(
             [
@@ -96,7 +96,7 @@ final class PropertyPassParserTest extends TestCase
     public function testParseAssociativeArrayWithDirectionInSpecs(): void
     {
         // @phpstan-ignore argument.type
-        $result = $this->parser->parse(['title' => ['direction' => 'desc']]);
+        $result = $this->propertyPassParser->parse(['title' => ['direction' => 'desc']]);
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::DESC)],
@@ -107,7 +107,7 @@ final class PropertyPassParserTest extends TestCase
     public function testParseAssociativeArrayWithDefaultDirectionWhenNoDirectionKey(): void
     {
         // @phpstan-ignore argument.type
-        $result = $this->parser->parse(['title' => []]);
+        $result = $this->propertyPassParser->parse(['title' => []]);
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::ASC)],
@@ -118,7 +118,7 @@ final class PropertyPassParserTest extends TestCase
     public function testParseAssociativeArrayWithFlags(): void
     {
         // @phpstan-ignore argument.type
-        $result = $this->parser->parse([
+        $result = $this->propertyPassParser->parse([
             'title' => [
                 'direction' => 'asc',
                 'flags'     => [SORT_STRING, SORT_FLAG_CASE],
@@ -134,7 +134,7 @@ final class PropertyPassParserTest extends TestCase
     public function testParseAssociativeArrayWithEmptyFlags(): void
     {
         // @phpstan-ignore argument.type
-        $result = $this->parser->parse(['title' => ['flags' => []]]);
+        $result = $this->propertyPassParser->parse(['title' => ['flags' => []]]);
 
         $this->assertEquals(
             [new PropertyPass('title', Direction::ASC, 0)],
@@ -146,7 +146,7 @@ final class PropertyPassParserTest extends TestCase
     {
         $this->expectException(SortException::class);
 
-        $this->parser->parse(['title' => 'invalid']);
+        $this->propertyPassParser->parse(['title' => 'invalid']);
     }
 
     public function testParseThrowsOnNonStringDirectionInSpecs(): void
@@ -154,7 +154,7 @@ final class PropertyPassParserTest extends TestCase
         $this->expectException(SortException::class);
 
         // @phpstan-ignore argument.type
-        $this->parser->parse(['title' => ['direction' => 42]]);
+        $this->propertyPassParser->parse(['title' => ['direction' => 42]]);
     }
 
     public function testParseThrowsOnInvalidDirectionInSpecs(): void
@@ -162,7 +162,7 @@ final class PropertyPassParserTest extends TestCase
         $this->expectException(SortException::class);
 
         // @phpstan-ignore argument.type
-        $this->parser->parse(['title' => ['direction' => 'invalid']]);
+        $this->propertyPassParser->parse(['title' => ['direction' => 'invalid']]);
     }
 
     public function testParseThrowsOnNonArrayFlags(): void
@@ -170,7 +170,7 @@ final class PropertyPassParserTest extends TestCase
         $this->expectException(SortException::class);
 
         // @phpstan-ignore argument.type
-        $this->parser->parse(['title' => ['flags' => 'not-an-array']]);
+        $this->propertyPassParser->parse(['title' => ['flags' => 'not-an-array']]);
     }
 
     public function testParseThrowsOnNonIntegerFlag(): void
@@ -178,7 +178,7 @@ final class PropertyPassParserTest extends TestCase
         $this->expectException(SortException::class);
 
         // @phpstan-ignore argument.type
-        $this->parser->parse(['title' => ['flags' => ['not-an-int']]]);
+        $this->propertyPassParser->parse(['title' => ['flags' => ['not-an-int']]]);
     }
 
     public function testParseThrowsOnNumericIndexWithNonStringValue(): void
@@ -186,6 +186,6 @@ final class PropertyPassParserTest extends TestCase
         $this->expectException(SortException::class);
 
         // @phpstan-ignore argument.type
-        $this->parser->parse([['nested' => 'array']]);
+        $this->propertyPassParser->parse([['nested' => 'array']]);
     }
 }

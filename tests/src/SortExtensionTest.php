@@ -13,16 +13,16 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Twig\TwigFilter;
 
-class SortExtensionTest extends TestCase
+final class SortExtensionTest extends TestCase
 {
-    private SortExtension $extension;
+    private SortExtension $sortExtension;
 
     #[Override]
     protected function setUp(): void
     {
         $associativeSorter = new AssociativeSorter();
 
-        $this->extension = new SortExtension(
+        $this->sortExtension = new SortExtension(
             new ByPropertySorter(new PropertyAccessor(), $associativeSorter),
             new ByKeySorter(),
             new ByValueSorter(),
@@ -33,15 +33,15 @@ class SortExtensionTest extends TestCase
 
     public function testGetFiltersReturnsExpectedFilters(): void
     {
-        $filters = $this->extension->getFilters();
+        $filters = $this->sortExtension->getFilters();
 
         $this->assertContainsOnlyInstancesOf(TwigFilter::class, $filters);
         $this->assertCount(7, $filters);
 
         $names = array_map(
             static fn(
-                TwigFilter $f,
-            ): string => $f->getName(),
+                TwigFilter $twigFilter,
+            ): string => $twigFilter->getName(),
             $filters,
         );
 
@@ -62,7 +62,7 @@ class SortExtensionTest extends TestCase
     public function testGetFiltersWithPrefixPrependsPrefixToNames(): void
     {
         $associativeSorter = new AssociativeSorter();
-        $extension         = new SortExtension(
+        $sortExtension         = new SortExtension(
             new ByPropertySorter(new PropertyAccessor(), $associativeSorter),
             new ByKeySorter(),
             new ByValueSorter(),
@@ -73,9 +73,9 @@ class SortExtensionTest extends TestCase
 
         $names = array_map(
             static fn(
-                TwigFilter $f,
-            ): string => $f->getName(),
-            $extension->getFilters(),
+                TwigFilter $twigFilter,
+            ): string => $twigFilter->getName(),
+            $sortExtension->getFilters(),
         );
 
         $this->assertSame(
@@ -101,7 +101,7 @@ class SortExtensionTest extends TestCase
                 3,
             ],
             array_values(
-                (array) ($this->extension->sort(
+                (array) ($this->sortExtension->sort(
                     [
                         3,
                         1,
@@ -116,7 +116,7 @@ class SortExtensionTest extends TestCase
     {
         $this->assertSame(
             [],
-            (array) $this->extension->sort([]),
+            (array) $this->sortExtension->sort([]),
         );
     }
 
@@ -129,7 +129,7 @@ class SortExtensionTest extends TestCase
                 1,
             ],
             array_values(
-                (array) $this->extension->rsort(
+                (array) $this->sortExtension->rsort(
                     [
                         3,
                         1,
@@ -148,7 +148,7 @@ class SortExtensionTest extends TestCase
                 'c' => 2,
                 'b' => 3,
             ],
-            $this->extension->asort(
+            $this->sortExtension->asort(
                 [
                     'b' => 3,
                     'a' => 1,
@@ -166,7 +166,7 @@ class SortExtensionTest extends TestCase
                 'c' => 2,
                 'a' => 1,
             ],
-            $this->extension->arsort(
+            $this->sortExtension->arsort(
                 [
                     'b' => 3,
                     'a' => 1,
@@ -184,7 +184,7 @@ class SortExtensionTest extends TestCase
                 'b' => 2,
                 'c' => 3,
             ],
-            $this->extension->ksort(
+            $this->sortExtension->ksort(
                 [
                     'c' => 3,
                     'a' => 1,
@@ -202,7 +202,7 @@ class SortExtensionTest extends TestCase
                 'b' => 2,
                 'a' => 1,
             ],
-            $this->extension->krsort(
+            $this->sortExtension->krsort(
                 [
                     'c' => 3,
                     'a' => 1,
@@ -220,7 +220,7 @@ class SortExtensionTest extends TestCase
                 2 => ['name' => 'Bob'],
                 0 => ['name' => 'Charlie'],
             ],
-            $this->extension->psort(
+            $this->sortExtension->psort(
                 [
                     ['name' => 'Charlie'],
                     ['name' => 'Alice'],
@@ -248,7 +248,7 @@ class SortExtensionTest extends TestCase
                     'age'  => 30,
                 ],
             ],
-            $this->extension->psort(
+            $this->sortExtension->psort(
                 [
                     [
                         'name' => 'Charlie',
@@ -279,7 +279,7 @@ class SortExtensionTest extends TestCase
                 2 => ['name' => 'Bob'],
                 1 => ['name' => 'Alice'],
             ],
-            $this->extension->psort(
+            $this->sortExtension->psort(
                 [
                     ['name' => 'Charlie'],
                     ['name' => 'Alice'],
@@ -294,7 +294,7 @@ class SortExtensionTest extends TestCase
     {
         $this->assertSame(
             [],
-            $this->extension->psort(
+            $this->sortExtension->psort(
                 [],
                 '[name]',
             ),

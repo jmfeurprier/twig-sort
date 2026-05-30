@@ -4,18 +4,22 @@
     "license": "mit",
     "type": "library",
     "require": {
-        "php": ">=8.3",
+        "php": "^8.3",
         "jmf/sort": "^2.0",
         "twig/twig": "^3.0"
     },
     "require-dev": {
         "overtrue/phplint": "^9",
         "phpstan/phpstan": "^2",
+        "phpstan/phpstan-strict-rules": "^2",
         "phpunit/phpunit": "^12|^13",
         "rector/rector": "^2",
         "squizlabs/php_codesniffer": "^4"
     },
     "config": {
+        "audit": {
+            "abandoned": "report"
+        },
         "optimize-autoloader": true,
         "sort-packages": true
     },
